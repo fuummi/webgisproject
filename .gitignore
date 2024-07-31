@@ -1,1 +1,112 @@
 **/node_modules/
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import babel from '@rollup/plugin-babel';
+import vue from 'rollup-plugin-vue';
+import terser from '@rollup/plugin-terser';
+import postcss from 'rollup-plugin-postcss';
+
+const isVue3 = process.env.VUE_VERSION === '3';
+const vue2Config = {
+  input: 'src/vue2/index.js',
+  output: [
+    {
+      file: dist/my-library/vue2/index.esm.js,
+      format: 'es',
+      sourcemap: true,
+    },
+    {
+      file: dist/my-library/vue2/index.cjs.js,
+      format: 'cjs',
+      sourcemap: true,
+    },
+    {
+      name: 'MyLibrary',
+      file: dist/my-library/vue2/index.umd.js,
+      format: 'umd',
+      sourcemap: true,
+      globals: {
+        vue: 'Vue',
+      },
+    },
+  ],
+  plugins: [
+    resolve(),
+    vue({
+      css: true,
+      compileTemplate: true,
+      template: {
+        isProduction: true,
+        compilerOptions: {
+          whitespace: 'condense',
+        },
+      },
+      defaultLang: {
+        script: 'babel',
+      },
+      version: 2,
+    }),
+    postcss(),
+    commonjs(),
+    babel({
+      exclude: 'node_modules/**',
+      babelHelpers: 'bundled',
+    }),
+    terser(),
+  ],
+  external: ['vue', 'vue-template-compiler'],
+}
+const vue3Config = {
+  input: 'src/vue3/index.js',
+  output: [
+    {
+      file: dist/my-library/vue3/index.esm.js,
+      format: 'es',
+      sourcemap: true,
+    },
+    {
+      file: dist/my-library/vue3/index.cjs.js,
+      format: 'cjs',
+      sourcemap: true,
+    },
+    {
+      name: 'MyLibrary',
+      file: dist/my-library/vue3/index.umd.js,
+      format: 'umd',
+      sourcemap: true,
+      globals: {
+        vue: 'Vue',
+      },
+    },
+  ],
+  plugins: [
+    resolve(),
+    vue({
+      css: true,
+      compileTemplate: true,
+      template: {
+        isProduction: true,
+        compilerOptions: {
+          whitespace: 'condense',
+        },
+      },
+      defaultLang: {
+        script: 'babel',
+      },
+      version: 3,
+    }),
+    postcss(),
+    commonjs(),
+    babel({
+      exclude: 'node_modules/**',
+      babelHelpers: 'bundled',
+    }),
+    terser(),
+  ],
+  external: ['vue'],
+}
+
+export default [
+  vue2Config,
+  vue3Config
+]
